@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidget, QTableWidge
 from Controller.BatchWordController import BatchWordController
 from Controller.EditWordController import EditWordController
 from Controller.StudyMeaningController import TestController
+from Controller.StudySpellController import SpellController
 from Model.MainModel import MainModel
 from SharedData.DictionaryData import DictionaryData
 from View import EditWordDialog
@@ -46,6 +47,7 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_tableWidget.doubleClicked.connect(self.edit_word)
         self.word_lineEdit.textChanged.connect(self.search_word)
         self.study_meaning_action.triggered.connect(self.show_meaning_study)
+        self.study_spell_action.triggered.connect(self.show_spell_study)
 
 
     def init(self):
@@ -257,6 +259,9 @@ class MainController(Ui_MainWindow, QMainWindow):
 
     def show_meaning_study(self):
         TestController(DictionaryData.current_word_list.group_name, self)
+
+    def show_spell_study(self):
+        SpellController(DictionaryData.current_word_list.group_name, self)
 
     ###################################
     # Other ###########################
