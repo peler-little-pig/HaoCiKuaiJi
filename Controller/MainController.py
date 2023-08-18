@@ -11,8 +11,10 @@ from Controller.BatchWordController import BatchWordController
 from Controller.EditWordController import EditWordController
 from Controller.StudyMeaningController import TestController
 from Controller.StudySpellController import SpellController
+from Lib.AudioManager import AudioManager
 from Model.MainModel import MainModel
 from SharedData.DictionaryData import DictionaryData
+from SharedData.SettingData import SettingData
 from View import EditWordDialog
 from View.MainWindow import Ui_MainWindow
 from multiprocessing import Process
@@ -48,6 +50,7 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_lineEdit.textChanged.connect(self.search_word)
         self.study_meaning_action.triggered.connect(self.show_meaning_study)
         self.study_spell_action.triggered.connect(self.show_spell_study)
+        self.setting_is_audio_need_download_action.triggered.connect(self.is_audio_need_download_setting)
 
 
     def init(self):
@@ -55,10 +58,9 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_tableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
         # 默认单选
         self.word_tableWidget.setSelectionMode(QTableWidget.SingleSelection)
-        # Create a media player instance
-        self.media_player = QMediaPlayer()
 
         self.init_group()
+        self.init_setting()
 
     def short_key_connect(self):
         ...
@@ -232,7 +234,7 @@ class MainController(Ui_MainWindow, QMainWindow):
 
         # 添加播放音频按钮
         play_button = QPushButton(f'播放音频 {phonetic_symbol}', self)
-        play_button.clicked.connect(lambda: self.player_online_radio(audio_link))
+        play_button.clicked.connect(lambda: AudioManager.play_radio(word))
         self.word_tableWidget.setCellWidget(row_count, 4, play_button)
         
     def inactive_word(self):
@@ -266,11 +268,22 @@ class MainController(Ui_MainWindow, QMainWindow):
     ###################################
     # Other ###########################
     ###################################
-    def player_online_radio(self, link):
-        audio = QMediaContent(QUrl(link))
-        self.media_player.setMedia(audio)
-        self.media_player.play()
 
     def closeEvent(self, a0):
         super().closeEvent(a0)
         self.model.save_word()
+        AudioManager.remove_audio()
+
+    ###################################
+    # Setting #########################
+    ###################################
+    def init_setting(self):
+        self.model.init_setting()
+        self.update_setting()
+
+    def is_audio_need_download_setting(self):
+        self.model.is_audio_need_download_setting(self.setting_is_audio_need_download_action.isChecked())
+        self.update_setting()
+
+    def update_setting(self):
+        self.setting_is_audio_need_download_action.setChecked(SettingData.is_audio_need_download)

@@ -8,6 +8,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtWidgets import QMainWindow, QDialog, QShortcut
 
+from Lib.AudioManager import AudioManager
 from Model.RightModel import RightModel
 from View.RightWindow import Ui_Dialog
 
@@ -29,12 +30,12 @@ class RightController(Ui_Dialog, QDialog):
         self.init()
         self.right_pushButton.clicked.connect(self.right)
         self.wrong_pushButton.clicked.connect(self.wrong)
-        self.play_pushButton.clicked.connect(self.play_word)
+        self.play_pushButton.clicked.connect(lambda :AudioManager.play_radio(self.word))
 
     def short_key_connect(self):
         QShortcut(QKeySequence(Qt.Key_Space), self).activated.connect(self.wrong)
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.accept)
-        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: self.play_word())
+        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: AudioManager.play_radio(self.word))
 
     def init(self):
         # 隐藏关闭按钮
@@ -46,7 +47,7 @@ class RightController(Ui_Dialog, QDialog):
         self.meaning_label.setText(chinese_definitions.replace(';;', '\n'))
         self.example_label.setText(example.replace(';;', '\n'))
         self.play_pushButton.setText(f'播放音频 {phonetic_symbol}')
-        self.play_word()
+        AudioManager.play_radio(self.word)
 
     def right(self):
         self.accept()

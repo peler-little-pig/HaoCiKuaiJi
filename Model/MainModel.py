@@ -8,8 +8,11 @@ from PyQt5.QtWidgets import QProgressDialog
 
 from DataStructure.Word import Word
 from DataStructure.WordList import WordList
+from Lib.AudioManager import AudioManager
+from Lib.Settings import Settings
 from Lib.WordSearcher import WordSearcher
 from SharedData.DictionaryData import DictionaryData
+from SharedData.SettingData import SettingData
 
 
 class MainModel(object):
@@ -91,6 +94,7 @@ class MainModel(object):
     def load_word(self, group):
         DictionaryData.current_word_list = WordList(group)
         DictionaryData.current_word_list.load_word(f'./AppData/dictionary/{group}/words.csv')
+        AudioManager.download_audio_if_need()
 
     def add_auto_word(self, word):
         DictionaryData.current_word_list.append(WordSearcher.search_all(word))
@@ -111,3 +115,13 @@ class MainModel(object):
     def save_word(self):
         if DictionaryData.current_word_list:
             DictionaryData.current_word_list.save_word()
+
+    def init_setting(self):
+        Settings.load_setting()
+
+    def is_audio_need_download_setting(self, value):
+        Settings.change_is_audio_need_download(value)
+        if value:
+            AudioManager.download_audio_if_need()
+        else:
+            AudioManager.remove_audio()

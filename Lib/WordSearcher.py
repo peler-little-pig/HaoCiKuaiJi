@@ -4,14 +4,15 @@ from bs4 import BeautifulSoup
 from DataStructure.Word import Word
 from Lib.DataTransform import DataTransform as d
 
+# 设置请求头，模拟浏览器访问
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+}
+
 
 class WordSearcher(staticmethod):
     @staticmethod
     def search_all(word):
-        # 设置请求头，模拟浏览器访问
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-        }
         base_url = 'https://dictionary.cambridge.org/dictionary/english-chinese-simplified/'
         # 发送GET请求
         response = requests.get(base_url + word, headers=headers)
@@ -51,10 +52,6 @@ class WordSearcher(staticmethod):
 
     @staticmethod
     def search_audio_link(word):
-        # 设置请求头，模拟浏览器访问
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-        }
         base_url = 'https://dictionary.cambridge.org/dictionary/english-chinese-simplified/'
         # 发送GET请求
         response = requests.get(base_url + word, headers=headers)

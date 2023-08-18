@@ -122,10 +122,17 @@
      <string>导出</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_6">
+    <property name="title">
+     <string>设置</string>
+    </property>
+    <addaction name="setting_is_audio_need_download_action"/>
+   </widget>
    <addaction name="menu_3"/>
    <addaction name="menu"/>
    <addaction name="menu_4"/>
    <addaction name="menu_5"/>
+   <addaction name="menu_6"/>
    <addaction name="menu_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -244,6 +251,17 @@
   <action name="action_3">
    <property name="text">
     <string>详细信息</string>
+   </property>
+  </action>
+  <action name="setting_is_audio_need_download_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>缓存音频数据</string>
    </property>
   </action>
  </widget>

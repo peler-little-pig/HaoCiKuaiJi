@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QInputDialog, QListWid
 
 from Controller.RightController import RightController
 from Controller.WrongController import WrongController
+from Lib.AudioManager import AudioManager
 from Model.StudySpellModel import SpellModel
 from View.StudySpellWindow import Ui_MainWindow
 
@@ -34,7 +35,7 @@ class SpellController(Ui_MainWindow, QMainWindow):
 
     def short_key_connect(self):
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.check)
-        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: self.play_word(self.word_label.text()))
+        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: self.AudioManager.download_audio_if_need()(self.word_label.text()))
 
     def init(self):
         self.next()
@@ -44,9 +45,9 @@ class SpellController(Ui_MainWindow, QMainWindow):
         self.next_word = self.model.get_next_word()
         if self.next_word is not None:
             self.word_label.setText(self.model.get_chinese_definitions(self.next_word))
-            self.play_word(self.next_word)
+            AudioManager.play_radio(self.next_word)
             self.play_pushButton.setText(f'播放音频{self.model.get_phonetic_symbol(self.next_word)}')
-            self.play_pushButton.clicked.connect(lambda: self.play_word(self.next_word))
+            self.play_pushButton.clicked.connect(lambda: AudioManager.play_radio(self.next_word))
             self.test_lineEdit.clear()
         else:
             QMessageBox.information(self, "信息", "您已经将单词背完了，记得常来复习哦")
