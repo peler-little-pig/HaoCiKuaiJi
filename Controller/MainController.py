@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidget, QTableWidge
 
 from Controller.BatchWordController import BatchWordController
 from Controller.EditWordController import EditWordController
+from Controller.StudyMeaningController import TestController
 from Model.MainModel import MainModel
 from SharedData.DictionaryData import DictionaryData
 from View import EditWordDialog
@@ -44,6 +45,7 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_edit_action.triggered.connect(self.edit_word)
         self.word_tableWidget.doubleClicked.connect(self.edit_word)
         self.word_lineEdit.textChanged.connect(self.search_word)
+        self.study_meaning_action.triggered.connect(self.show_meaning_study)
 
 
     def init(self):
@@ -249,6 +251,16 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_tableWidget.setEnabled(True)
         self.word_lineEdit.setEnabled(True)
 
+    ###################################
+    # STUDY ###########################
+    ###################################
+
+    def show_meaning_study(self):
+        TestController(DictionaryData.current_word_list.group_name, self)
+
+    ###################################
+    # Other ###########################
+    ###################################
     def player_online_radio(self, link):
         audio = QMediaContent(QUrl(link))
         self.media_player.setMedia(audio)
