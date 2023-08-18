@@ -29,8 +29,12 @@ class BatchWordController(Ui_Dialog, QDialog):
     def new_word(self):
         text, ok = QInputDialog.getText(self, '添加单词', '请输入要添加的单词')
         if ok:
-            self.model.new_word(text)
-            self.update_word()
+            if not self.model.is_exist_word(text):
+                self.model.new_word(text)
+                self.update_word()
+            else:
+                QMessageBox.information(self, "提示", f"单词{text}重复", QMessageBox.Ok, QMessageBox.Ok)
+
 
     def delete_word(self):
         selected_items = self.listWidget.selectedItems()

@@ -20,3 +20,9 @@ class BatchWordModel(object):
 
     def delete_word(self, name):
         self.word_list.remove(name)
+
+    def is_exist_word(self, word_):
+        for word in self.word_list:
+            if word == word_:
+                return True
+        return False or DictionaryData.current_word_list.get_word(word_) is not None

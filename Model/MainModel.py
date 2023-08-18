@@ -56,7 +56,7 @@ class MainModel(object):
             header = ["word", "part_of_speech", "meaning", "example", "phonetic_symbol", "audio_link"]
             csv_writer.writerow(header)
 
-            progressDialog = QProgressDialog("正在导入旧版单词组", "取消", 0, len(word_info_list),None)
+            progressDialog = QProgressDialog("正在导入旧版单词组", "取消", 0, len(word_info_list), None)
             progressDialog.setWindowTitle('请稍后')
             progressDialog.show()
             is_break = False
@@ -77,6 +77,17 @@ class MainModel(object):
     def export_group(self, name, target):
         shutil.copytree(f'./AppData/dictionary/{name}', target)
 
+    def update_data_group(self):
+        progressDialog = QProgressDialog("正在更新单词组", "取消", 0, len(DictionaryData.current_word_list), None)
+        progressDialog.setWindowTitle('请稍后')
+        progressDialog.show()
+        for i in range(len(DictionaryData.current_word_list)):
+            DictionaryData.current_word_list[i] = WordSearcher.search_all(DictionaryData.current_word_list[i].word)
+            QCoreApplication.processEvents()
+            progressDialog.setValue(i)
+            if progressDialog.wasCanceled():
+                break
+
     def load_word(self, group):
         DictionaryData.current_word_list = WordList(group)
         DictionaryData.current_word_list.load_word(f'./AppData/dictionary/{group}/words.csv')
@@ -84,12 +95,18 @@ class MainModel(object):
     def add_auto_word(self, word):
         DictionaryData.current_word_list.append(WordSearcher.search_all(word))
 
+    def add_inauto_word(self, word_):
+        word = Word(word_, "未定义", "未定义", "未定义", "未定义", "未定义")
+        DictionaryData.current_word_list.append(word)
+
     def delete_word(self, word):
         DictionaryData.current_word_list.remove(word)
 
     def edit_word(self, word) -> Word:
         return DictionaryData.current_word_list.get_word(word)
 
+    def is_exist_word(self, word):
+        return DictionaryData.current_word_list.get_word(word) is not None
 
     def save_word(self):
         if DictionaryData.current_word_list:

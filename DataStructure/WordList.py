@@ -31,6 +31,7 @@ class WordList(List):
         for word in self:
             if word.word == word_:
                 return word
+        return None
 
     def __str__(self):
         result = ""

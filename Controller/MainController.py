@@ -36,11 +36,14 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.group_import_old_action.triggered.connect(self.import_old_group)
         self.group_lineEdit.textChanged.connect(self.search_group)
         self.group_listWidget.doubleClicked.connect(self.load_word)
+        self.group_update_data_action.triggered.connect(self.update_data_group)
         self.word_add_auto_word_action.triggered.connect(self.add_auto_word)
+        self.word_add_inauto_word_action.triggered.connect(self.add_inauto_word)
         self.word_add_batch_action.triggered.connect(self.add_batch_word)
         self.word_delect_action.triggered.connect(self.delete_word)
         self.word_edit_action.triggered.connect(self.edit_word)
         self.word_tableWidget.doubleClicked.connect(self.edit_word)
+        self.word_lineEdit.textChanged.connect(self.search_word)
 
 
     def init(self):
@@ -115,6 +118,10 @@ class MainController(Ui_MainWindow, QMainWindow):
             item = self.group_listWidget.item(row)
             item.setHidden(item not in items)
 
+    def update_data_group(self):
+        self.model.update_data_group()
+        self.update_group()
+
     def update_group(self):
         self.group_listWidget.clear()
         self.group_listWidget.addItems(self.model.group_list)
@@ -130,8 +137,23 @@ class MainController(Ui_MainWindow, QMainWindow):
     def add_auto_word(self):
         text, ok = QInputDialog.getText(self, '添加单词', '请输入要搜索的单词')
         if ok:
-            self.model.add_auto_word(text)
-            self.update_word()
+            if not self.model.edit_word(text):
+                self.model.add_auto_word(text)
+                self.update_word()
+                self.word_tableWidget.setCurrentItem(self.word_tableWidget.item(self.word_tableWidget.rowCount()-1,0))
+            else:
+                QMessageBox.information(self, "提示", f"单词{text}重复", QMessageBox.Ok, QMessageBox.Ok)
+
+    def add_inauto_word(self):
+        text, ok = QInputDialog.getText(self, '添加单词', '请输入要手动添加的单词')
+        if ok:
+            if not self.model.is_exist_word(text):
+                self.model.add_inauto_word(text)
+                self.update_word()
+                self.word_tableWidget.setCurrentItem(self.word_tableWidget.item(self.word_tableWidget.rowCount()-1,0))
+            else:
+                QMessageBox.information(self, "提示", f"单词{text}重复", QMessageBox.Ok, QMessageBox.Ok)
+
 
     def add_batch_word(self):
         word_window = BatchWordController(self)
@@ -174,6 +196,14 @@ class MainController(Ui_MainWindow, QMainWindow):
             self.update_word()
         else:
             QMessageBox.information(self, "提示", "请选择单词进行编辑", QMessageBox.Ok, QMessageBox.Ok)
+
+    def search_word(self, text):
+        for row in range(self.word_tableWidget.rowCount()):
+            item = self.word_tableWidget.item(row, 0)  # 获取每行的第一个单元格
+            if item is not None:
+                t = item.text()
+                matched = text.lower() in t.lower()
+                self.word_tableWidget.setRowHidden(row, not matched)
 
     def update_word(self):
         self.word_tableWidget.setRowCount(0)
