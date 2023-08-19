@@ -15,9 +15,10 @@ class WordList(List):
             self.append(Word(*csv_reader[i]))
 
     def remove(self, __value) -> None:
-        for word in self:
-            if word.word == __value:
-                del word
+        for i in range(len(self)):
+            if self[i].word == __value:
+                del self[i]
+                break
 
     def save_word(self):
         with open(f'./AppData/dictionary/{self.group_name}/words.csv', 'w', encoding='utf-8', newline="") as f:

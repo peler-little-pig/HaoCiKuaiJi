@@ -3,18 +3,21 @@ import sys
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QUrl, QModelIndex, Qt, QCoreApplication
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, \
-    QListWidgetItem, QFileDialog, QProgressDialog
+    QListWidgetItem, QFileDialog, QProgressDialog, QShortcut, QAbstractItemView
 
 from Controller.BatchWordController import BatchWordController
 from Controller.EditWordController import EditWordController
-from Controller.StudyMeaningController import TestController
-from Controller.StudySpellController import SpellController
+from Controller.SettingController import SettingController
+from Controller.StudyMeaningController import StudyMeaningController
+from Controller.StudySpellController import StudySpellController
 from Lib.AudioManager import AudioManager
+from Lib.Settings import Settings
 from Model.MainModel import MainModel
+from SharedData.AppData import AppData
 from SharedData.DictionaryData import DictionaryData
-from SharedData.SettingData import SettingData
 from View import EditWordDialog
 from View.MainWindow import Ui_MainWindow
 from multiprocessing import Process
@@ -50,8 +53,10 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.word_lineEdit.textChanged.connect(self.search_word)
         self.study_meaning_action.triggered.connect(self.show_meaning_study)
         self.study_spell_action.triggered.connect(self.show_spell_study)
-        self.setting_is_audio_need_download_action.triggered.connect(self.is_audio_need_download_setting)
-
+        self.setting_dialog_action.triggered.connect(self.show_dialog_setting)
+        self.setting_export_action.triggered.connect(self.export_setting)
+        self.setting_import_action.triggered.connect(self.import_setting)
+        self.export_pure_table_csv_action.triggered.connect(self.pure_table_csv_export)
 
     def init(self):
         # 设置表格不可编辑
@@ -63,7 +68,7 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.init_setting()
 
     def short_key_connect(self):
-        ...
+        QShortcut(QKeySequence(Qt.Key_A), self).activated.connect(self.add_auto_word)
 
     ###################################
     # GROUP ###########################
@@ -79,15 +84,17 @@ class MainController(Ui_MainWindow, QMainWindow):
             self.update_group()
 
     def delete_group(self):
+        if Settings.settings['group_ask_delete']:
+            msg_box = QMessageBox.question(self, "确认", "是否删除？", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            if msg_box == QMessageBox.Yes:
+                ...
+            else:
+                return None
         selected_items = self.group_listWidget.selectedItems()
         if selected_items:
             for item in selected_items:
                 self.model.delete_group(item.text())
-        if not self.group_listWidget.size().isEmpty():
-            self.model.load_word(self.group_listWidget.item(0).text())
-            self.update_word()
-        else:
-            self.inactive_word()
+        self.inactive_word()
         self.update_group()
 
     def rename_group(self):
@@ -132,6 +139,11 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.group_listWidget.clear()
         self.group_listWidget.addItems(self.model.group_list)
 
+        if Settings.settings['group_auto_order']:
+            self.group_listWidget.sortItems(Qt.AscendingOrder)
+        elif Settings.settings['group_reserve_auto_order']:
+            self.group_listWidget.sortItems(Qt.DescendingOrder)
+
     ###################################
     # WORD ###########################
     ###################################
@@ -146,7 +158,8 @@ class MainController(Ui_MainWindow, QMainWindow):
             if not self.model.edit_word(text):
                 self.model.add_auto_word(text)
                 self.update_word()
-                self.word_tableWidget.setCurrentItem(self.word_tableWidget.item(self.word_tableWidget.rowCount()-1,0))
+                self.word_tableWidget.setCurrentItem(
+                    self.word_tableWidget.item(self.word_tableWidget.rowCount() - 1, 0))
             else:
                 QMessageBox.information(self, "提示", f"单词{text}重复", QMessageBox.Ok, QMessageBox.Ok)
 
@@ -156,10 +169,10 @@ class MainController(Ui_MainWindow, QMainWindow):
             if not self.model.is_exist_word(text):
                 self.model.add_inauto_word(text)
                 self.update_word()
-                self.word_tableWidget.setCurrentItem(self.word_tableWidget.item(self.word_tableWidget.rowCount()-1,0))
+                self.word_tableWidget.setCurrentItem(
+                    self.word_tableWidget.item(self.word_tableWidget.rowCount() - 1, 0))
             else:
                 QMessageBox.information(self, "提示", f"单词{text}重复", QMessageBox.Ok, QMessageBox.Ok)
-
 
     def add_batch_word(self):
         word_window = BatchWordController(self)
@@ -177,10 +190,16 @@ class MainController(Ui_MainWindow, QMainWindow):
                     break
             progressDialog.setValue(len(word_window.model.word_list))
             if is_break:
-               pass
+                pass
             self.update_word()
 
     def delete_word(self):
+        if Settings.settings['word_ask_delete']:
+            msg_box = QMessageBox.question(self, "确认", "是否删除？", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            if msg_box == QMessageBox.Yes:
+                ...
+            else:
+                return None
         selected_items = self.word_tableWidget.selectedItems()
         rows_to_delete = set()
 
@@ -218,8 +237,13 @@ class MainController(Ui_MainWindow, QMainWindow):
         for word in DictionaryData.current_word_list:
             self.insert_word(*word.get_value())
 
+        if Settings.settings['word_auto_order']:
+            self.word_tableWidget.sortItems(Qt.AscendingOrder)
+        elif Settings.settings['word_reserve_auto_order']:
+            self.word_tableWidget.sortItems(Qt.DescendingOrder)
+
     def insert_word(self, word: str, part_of_speech: list, meaning: list, example: list, phonetic_symbol: str,
-                 audio_link: str):
+                    audio_link: str):
         row_count = self.word_tableWidget.rowCount()
         self.word_tableWidget.insertRow(row_count)
 
@@ -236,7 +260,7 @@ class MainController(Ui_MainWindow, QMainWindow):
         play_button = QPushButton(f'播放音频 {phonetic_symbol}', self)
         play_button.clicked.connect(lambda: AudioManager.play_radio(word))
         self.word_tableWidget.setCellWidget(row_count, 4, play_button)
-        
+
     def inactive_word(self):
         self.word_tableWidget.setRowCount(0)
         self.word_tableWidget.clearContents()
@@ -260,30 +284,63 @@ class MainController(Ui_MainWindow, QMainWindow):
     ###################################
 
     def show_meaning_study(self):
-        TestController(DictionaryData.current_word_list.group_name, self)
+        self.model.init_study()
+        StudyMeaningController(DictionaryData.current_word_list.group_name, self)
 
     def show_spell_study(self):
-        SpellController(DictionaryData.current_word_list.group_name, self)
+        self.model.init_study()
+        StudySpellController(DictionaryData.current_word_list.group_name, self)
 
     ###################################
     # Other ###########################
     ###################################
-
     def closeEvent(self, a0):
         super().closeEvent(a0)
         self.model.save_word()
         AudioManager.remove_audio()
+        Settings.save_data()
 
     ###################################
     # Setting #########################
     ###################################
+    def show_dialog_setting(self):
+        dialog = SettingController(self)
+        dialog.exec_()
+        self.init_setting()
+
     def init_setting(self):
-        self.model.init_setting()
-        self.update_setting()
+        if Settings.settings['group_allow_multselect']:
+            self.group_listWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        else:
+            self.group_listWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        if Settings.settings['word_allow_multselect']:
+            self.word_tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        else:
+            self.word_tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        if Settings.settings['word_auto_order']:
+            self.word_tableWidget.sortItems(Qt.AscendingOrder)
+        elif Settings.settings['word_reserve_auto_order']:
+            self.word_tableWidget.sortItems(Qt.DescendingOrder)
+        if Settings.settings['group_auto_order']:
+            self.group_listWidget.sortItems(Qt.AscendingOrder)
+        elif Settings.settings['group_reserve_auto_order']:
+            self.group_listWidget.sortItems(Qt.DescendingOrder)
 
-    def is_audio_need_download_setting(self):
-        self.model.is_audio_need_download_setting(self.setting_is_audio_need_download_action.isChecked())
-        self.update_setting()
+    def import_setting(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.1版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
 
-    def update_setting(self):
-        self.setting_is_audio_need_download_action.setChecked(SettingData.is_audio_need_download)
+    def export_setting(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.1版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+
+    ###################################
+    # Export #########################
+    ###################################
+    def pure_table_csv_export(self):
+        path, type_ = QFileDialog.getSaveFileName(self, '导出单词组', DictionaryData.current_word_list.group_name,
+                                                  "csv (*.csv)")
+        if path:
+            self.model.pure_table_csv_export(path)

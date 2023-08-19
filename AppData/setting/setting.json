@@ -1,3 +1,1 @@
-{
-  "is_audio_need_download":true
-}
+{"audio_download_no": false, "audio_download_group": false, "audio_download_study": true, "group_allow_multselect": true, "group_ask_delete": true, "group_reserve_auto_order": false, "group_auto_order": true, "word_allow_multselect": true, "word_ask_delete": true, "word_reserve_auto_order": false, "word_auto_order": true}

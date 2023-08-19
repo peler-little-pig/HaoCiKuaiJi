@@ -11,14 +11,14 @@ from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QInputDialog, QListWid
 from Controller.RightController import RightController
 from Controller.WrongController import WrongController
 from Lib.AudioManager import AudioManager
-from Model.StudyMeaningModel import TestModel
+from Model.StudyMeaningModel import StudyMeaningModel
 from View.StudyMeaningWindow import Ui_MainWindow
 
 
-class TestController(Ui_MainWindow, QMainWindow):
+class StudyMeaningController(Ui_MainWindow, QMainWindow):
     def __init__(self, group, root=None):
         super().__init__(root)
-        self.model = TestModel(group)
+        self.model = StudyMeaningModel(group)
         # Create a media player instance
         self.media_player = QMediaPlayer()
 
@@ -37,7 +37,7 @@ class TestController(Ui_MainWindow, QMainWindow):
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.right)
         QShortcut(QKeySequence(Qt.Key_Space), self).activated.connect(self.wrong)
         QShortcut(QKeySequence(Qt.Key_H), self).activated.connect(self.show_tip)
-        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: self.AudioManager.download_audio_if_need()(self.word_label.text()))
+        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: AudioManager.play_radio(self.word_label.text()))
 
     def init(self):
         self.next()

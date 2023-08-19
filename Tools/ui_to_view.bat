@@ -5,3 +5,4 @@ pyuic5 ../UI/RightWindow.ui > ../View/RightWindow.py
 pyuic5 ../UI/StudyMeaningWindow.ui > ../View/StudyMeaningWindow.py
 pyuic5 ../UI/WrongWindow.ui > ../View/WrongWindow.py
 pyuic5 ../UI/StudySpellWindow.ui > ../View/StudySpellWindow.py
+pyuic5 ../UI/SettingDialog.ui > ../View/SettingDialog.py

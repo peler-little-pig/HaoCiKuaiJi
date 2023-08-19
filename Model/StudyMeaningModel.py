@@ -10,7 +10,7 @@ STATUS_REVIEW_RECENT = 1
 STATUS_REVIEW_ALL = 2
 
 
-class TestModel:
+class StudyMeaningModel:
     def __init__(self, group):
         self.group = group
         self.dict = self.read_word_info()

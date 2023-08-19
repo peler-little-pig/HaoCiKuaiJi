@@ -8,7 +8,7 @@ STATUS_REVIEW_RECENT = 1
 STATUS_REVIEW_ALL = 2
 
 
-class SpellModel:
+class StudySpellModel:
     def __init__(self, group):
         self.group = group
         self.dict = self.read_word_info()

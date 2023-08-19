@@ -11,14 +11,14 @@ from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QInputDialog, QListWid
 from Controller.RightController import RightController
 from Controller.WrongController import WrongController
 from Lib.AudioManager import AudioManager
-from Model.StudySpellModel import SpellModel
+from Model.StudySpellModel import StudySpellModel
 from View.StudySpellWindow import Ui_MainWindow
 
 
-class SpellController(Ui_MainWindow, QMainWindow):
+class StudySpellController(Ui_MainWindow, QMainWindow):
     def __init__(self, group, root=None):
         super().__init__(root)
-        self.model = SpellModel(group)
+        self.model = StudySpellModel(group)
         # Create a media player instance
         self.media_player = QMediaPlayer()
 
@@ -35,7 +35,7 @@ class SpellController(Ui_MainWindow, QMainWindow):
 
     def short_key_connect(self):
         QShortcut(QKeySequence(Qt.Key_Return), self).activated.connect(self.check)
-        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: self.AudioManager.download_audio_if_need()(self.word_label.text()))
+        QShortcut(QKeySequence(Qt.Key_P), self).activated.connect(lambda: AudioManager.play_radio(self.word_label.text()))
 
     def init(self):
         self.next()

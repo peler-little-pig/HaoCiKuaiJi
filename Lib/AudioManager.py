@@ -6,9 +6,9 @@ from PyQt5.QtCore import QCoreApplication, QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QProgressDialog
 
+from Lib.Settings import Settings
 from Lib.WordSearcher import WordSearcher
 from SharedData.DictionaryData import DictionaryData
-from SharedData.SettingData import SettingData
 from SharedData.StateData import StateData
 
 
@@ -26,25 +26,24 @@ class AudioManager(staticmethod):
                 f.write(response.content)
 
     @staticmethod
-    def download_audio_if_need():
-        if SettingData.is_audio_need_download:
+    def download_audio():
+        AudioManager.remove_audio()
+        progressDialog = QProgressDialog("正在缓存单词音频", "取消", 0, len(DictionaryData.current_word_list), None)
+        progressDialog.setWindowTitle('请稍后')
+        progressDialog.show()
+        is_break = False
+        for i in range(len(DictionaryData.current_word_list)):
+            AudioManager.save_audio(DictionaryData.current_word_list[i].word)
+            QCoreApplication.processEvents()
+            progressDialog.setValue(i)
+            if progressDialog.wasCanceled():
+                is_break = True
+                break
+        if is_break:
             AudioManager.remove_audio()
-            progressDialog = QProgressDialog("正在缓存单词音频", "取消", 0, len(DictionaryData.current_word_list), None)
-            progressDialog.setWindowTitle('请稍后')
-            progressDialog.show()
-            is_break = False
-            for i in range(len(DictionaryData.current_word_list)):
-                AudioManager.save_audio(DictionaryData.current_word_list[i].word)
-                QCoreApplication.processEvents()
-                progressDialog.setValue(i)
-                if progressDialog.wasCanceled():
-                    is_break = True
-                    break
-            if is_break:
-                AudioManager.remove_audio()
-            else:
-                StateData.is_audio_download = True
-            progressDialog.setValue(len(DictionaryData.current_word_list))
+        else:
+            StateData.is_audio_download = True
+        progressDialog.setValue(len(DictionaryData.current_word_list))
 
     @staticmethod
     def remove_audio():
