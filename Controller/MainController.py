@@ -60,7 +60,11 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.setting_export_action.triggered.connect(self.export_setting)
         self.setting_import_action.triggered.connect(self.import_setting)
         self.export_pure_table_csv_action.triggered.connect(self.pure_table_csv_export)
-
+        self.export_pure_table_excel_action.triggered.connect(self.pure_table_excel_export)
+        self.export_meaning_word_action.triggered.connect(self.meaning_word_export)
+        self.export_meaning_pdf_action.triggered.connect(self.meaning_pdf_export)
+        self.export_spell_word_action.triggered.connect(self.spell_word_export)
+        self.export_spell_pdf_action.triggered.connect(self.spell_pdf_export)
         self.help_about_action.triggered.connect(self.show_about_dialog_help)
         self.help_support_action.triggered.connect(self.show_support_dialog_help)
         self.help_tech_support_action.triggered.connect(self.show_help_tech_dialog_help)
@@ -347,10 +351,38 @@ class MainController(Ui_MainWindow, QMainWindow):
     # Export #########################
     ###################################
     def pure_table_csv_export(self):
-        path, type_ = QFileDialog.getSaveFileName(self, '导出单词组', DictionaryData.current_word_list.group_name,
-                                                  "csv (*.csv)")
-        if path:
-            self.model.pure_table_csv_export(path)
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+        # path, type_ = QFileDialog.getSaveFileName(self, '导出单词组', DictionaryData.current_word_list.group_name,
+        #                                           "csv (*.csv)")
+        # if path:
+        #     self.model.pure_table_csv_export(path)
+
+    def pure_table_excel_export(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+
+    def meaning_word_export(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+
+    def meaning_pdf_export(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+
+    def spell_word_export(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
+
+    def spell_pdf_export(self):
+        QMessageBox.information(self, "即将推出！", f"即将在v2.0.2版本推出此功能，当前版本{AppData.VERSION}",
+                                QMessageBox.Ok,
+                                QMessageBox.Ok)
 
     ###################################
     # Help ############################
