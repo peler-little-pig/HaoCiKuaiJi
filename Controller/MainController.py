@@ -8,11 +8,14 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidget, QTableWidgetItem, QPushButton, QMessageBox, \
     QListWidgetItem, QFileDialog, QProgressDialog, QShortcut, QAbstractItemView
 
+from Controller.AboutController import AboutController
 from Controller.BatchWordController import BatchWordController
 from Controller.EditWordController import EditWordController
+from Controller.HelpTechController import HelpTechController
 from Controller.SettingController import SettingController
 from Controller.StudyMeaningController import StudyMeaningController
 from Controller.StudySpellController import StudySpellController
+from Controller.SupportController import SupportController
 from Lib.AudioManager import AudioManager
 from Lib.Settings import Settings
 from Model.MainModel import MainModel
@@ -57,6 +60,10 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.setting_export_action.triggered.connect(self.export_setting)
         self.setting_import_action.triggered.connect(self.import_setting)
         self.export_pure_table_csv_action.triggered.connect(self.pure_table_csv_export)
+
+        self.help_about_action.triggered.connect(self.show_about_dialog_help)
+        self.help_support_action.triggered.connect(self.show_support_dialog_help)
+        self.help_tech_support_action.triggered.connect(self.show_help_tech_dialog_help)
 
     def init(self):
         # 设置表格不可编辑
@@ -344,3 +351,15 @@ class MainController(Ui_MainWindow, QMainWindow):
                                                   "csv (*.csv)")
         if path:
             self.model.pure_table_csv_export(path)
+
+    ###################################
+    # Help ############################
+    ###################################
+    def show_help_tech_dialog_help(self):
+        HelpTechController(self)
+
+    def show_about_dialog_help(self):
+        AboutController(self)
+
+    def show_support_dialog_help(self):
+        SupportController(self)

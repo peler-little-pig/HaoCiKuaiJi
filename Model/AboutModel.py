@@ -1,0 +1,3 @@
+class AboutModel(object):
+    def __init__(self):
+        ...

@@ -1,0 +1,3 @@
+class SupportModel(object):
+    def __init__(self):
+        ...
