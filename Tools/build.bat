@@ -1,3 +1,4 @@
+rd /s /q ..\Build
 pyinstaller -F ..\main.py --window
 move .\__init__.py ..\Build
 move .\main.spec ..\Build

@@ -19,7 +19,7 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("./AppData/res/logo/logo.png"))
+        self.label.setPixmap(QtGui.QPixmap("../UI\\../AppData/res/logo/logo.png"))
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.textBrowser = QtWidgets.QTextBrowser(Dialog)
