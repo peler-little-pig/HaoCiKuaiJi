@@ -9,3 +9,4 @@ pyuic5 ../UI/SettingDialog.ui > ../View/SettingDialog.py
 pyuic5 ../UI/AboutDialog.ui > ../View/AboutDialog.py
 pyuic5 ../UI/HelpTechDialog.ui > ../View/HelpTechDialog.py
 pyuic5 ../UI/SupportDialog.ui > ../View/SupportDialog.py
+echo success
