@@ -91,6 +91,28 @@ class MainModel(object):
             if progressDialog.wasCanceled():
                 break
 
+    def download_group(self):
+        AudioManager.download_audio()
+
+    def save_network_clean_group(self):
+        AudioManager.save_network_clean_audio()
+
+    def save_network_download_group(self, group_weight):
+        group_list = []
+        for i in range(group_weight.count()):
+            wl = WordList(group_weight.item(i).text())
+            wl.load_word(f'./AppData/dictionary/{group_weight.item(i).text()}/words.csv')
+            group_list.append(wl)
+        AudioManager.save_network_download_audio(group_list)
+
+    def save_network_check_group(self, group_weight):
+        group_list = []
+        for i in range(group_weight.count()):
+            wl = WordList(group_weight.item(i).text())
+            wl.load_word(f'./AppData/dictionary/{group_weight.item(i).text()}/words.csv')
+            group_list.append(wl)
+        return AudioManager.save_network_check_audio(group_list)
+
     def load_word(self, group):
         DictionaryData.current_word_list = WordList(group)
         DictionaryData.current_word_list.load_word(f'./AppData/dictionary/{group}/words.csv')

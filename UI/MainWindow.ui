@@ -75,6 +75,14 @@
     <property name="title">
      <string>单词组</string>
     </property>
+    <widget class="QMenu" name="menu_10">
+     <property name="title">
+      <string>省流量缓存</string>
+     </property>
+     <addaction name="group_save_network_clean_action"/>
+     <addaction name="group_save_network_download_action_2"/>
+     <addaction name="group_save_network_check_action"/>
+    </widget>
     <addaction name="group_new_action"/>
     <addaction name="group_delect_action"/>
     <addaction name="group_rename_action"/>
@@ -84,6 +92,8 @@
     <addaction name="group_export_action"/>
     <addaction name="separator"/>
     <addaction name="group_update_data_action"/>
+    <addaction name="group_download_action"/>
+    <addaction name="menu_10"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -341,6 +351,26 @@
   <action name="setting_export_action">
    <property name="text">
     <string>导出设置</string>
+   </property>
+  </action>
+  <action name="group_download_action">
+   <property name="text">
+    <string>缓存音频</string>
+   </property>
+  </action>
+  <action name="group_save_network_clean_action">
+   <property name="text">
+    <string>清空</string>
+   </property>
+  </action>
+  <action name="group_save_network_download_action_2">
+   <property name="text">
+    <string>缓存</string>
+   </property>
+  </action>
+  <action name="group_save_network_check_action">
+   <property name="text">
+    <string>检查</string>
    </property>
   </action>
  </widget>

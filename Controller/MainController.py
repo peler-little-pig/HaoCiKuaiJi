@@ -47,6 +47,10 @@ class MainController(Ui_MainWindow, QMainWindow):
         self.group_lineEdit.textChanged.connect(self.search_group)
         self.group_listWidget.doubleClicked.connect(self.load_word)
         self.group_update_data_action.triggered.connect(self.update_data_group)
+        self.group_download_action.triggered.connect(self.download_group)
+        self.group_save_network_clean_action.triggered.connect(self.save_network_clean_group)
+        self.group_save_network_download_action_2.triggered.connect(self.save_network_download_group)
+        self.group_save_network_check_action.triggered.connect(self.save_network_check_group)
         self.word_add_auto_word_action.triggered.connect(self.add_auto_word)
         self.word_add_inauto_word_action.triggered.connect(self.add_inauto_word)
         self.word_add_batch_action.triggered.connect(self.add_batch_word)
@@ -86,6 +90,8 @@ class MainController(Ui_MainWindow, QMainWindow):
     ###################################
     def init_group(self):
         self.model.init_group()
+        if Settings.settings['audio_download_save_network']:
+            self.save_network_check_group()
         self.update_group()
 
     def new_group(self):
@@ -145,6 +151,26 @@ class MainController(Ui_MainWindow, QMainWindow):
     def update_data_group(self):
         self.model.update_data_group()
         self.update_group()
+
+    def download_group(self):
+        self.model.download_group()
+        self.update_group()
+
+    def save_network_clean_group(self):
+        self.model.save_network_clean_group()
+        self.update_group()
+
+    def save_network_download_group(self):
+        self.model.save_network_download_group(self.group_listWidget)
+        self.update_group()
+
+    def save_network_check_group(self):
+        if not self.model.save_network_check_group(self.group_listWidget):
+            msg_box = QMessageBox.critical(self, "警告", "省流量模式单词未缓存，点击确定缓存", QMessageBox.Yes, QMessageBox.Yes)
+            if msg_box == QMessageBox.Yes:
+                self.save_network_download_group()
+        else:
+            QMessageBox.about(self, "提示", "省流量模式单词已缓存，请使用！")
 
     def update_group(self):
         self.group_listWidget.clear()
